@@ -2,6 +2,7 @@ package com.james.service;
 
 import com.james.entity.Customer;
 import com.james.repos.CustomerRepository;
+import com.james.util.TPSHealth;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +20,11 @@ public class CustomerService {
         this.customerRepository = customerRepository;
     }
 
+    @Autowired
+    TPSHealth tpsHealth;
+
     public Customer register(Customer customer) {
+        tpsHealth.updateTx();
         Optional<Customer> customerByName = customerRepository.findByName(customer.getName());
         if (customerByName.isPresent()) {
             throw new IllegalStateException("Customer already present: " + customer.getName());
